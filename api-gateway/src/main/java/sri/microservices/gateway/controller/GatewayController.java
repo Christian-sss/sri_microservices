@@ -90,6 +90,10 @@ public class GatewayController {
         HttpResponse<byte[]> response = httpClient.send(outbound.build(), HttpResponse.BodyHandlers.ofByteArray());
         HttpHeaders headers = copyResponseHeaders(response);
 
+        System.out.println("Gateway base URL: " + targetBaseUrl);
+        System.out.println("Gateway path recibido: " + request.getRequestURI());
+        System.out.println("Gateway URL destino: " + buildTargetUri(request, targetBaseUrl));
+
         return ResponseEntity.status(HttpStatus.valueOf(response.statusCode()))
                 .headers(headers)
                 .body(response.body());
