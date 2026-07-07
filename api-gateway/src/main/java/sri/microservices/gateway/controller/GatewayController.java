@@ -97,11 +97,8 @@ public class GatewayController {
         System.out.println("AUTH STATUS: " + response.statusCode());
         System.out.println("AUTH BODY: " + new String(response.body()));
 
-        HttpHeaders headers = copyResponseHeaders(response);
-
-
-        return ResponseEntity.status(HttpStatus.valueOf(response.statusCode()))
-                .headers(headers)
+        return ResponseEntity.status(response.statusCode())
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body(response.body());
     }
 
