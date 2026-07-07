@@ -100,6 +100,7 @@ public class ReporteService {
         parametros.put("fechaGeneracion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         parametros.put("TITULO_FILTRO", obtenerTituloFiltro(filtro));
         parametros.put("TOTAL_LITROS", Math.round(totalLitros * 100.0) / 100.0);
+        parametros.put("consumoAguaDataSource", new JRMapCollectionDataSource(datosReporte));
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(
                 jasperReport,
@@ -154,7 +155,10 @@ public class ReporteService {
                 WHERE e.estado = 'COMPLETADO' AND e.fecha_fin IS NOT NULL
                 """);
         MapSqlParameterSource params = aplicarFiltros(sql, inicio, fin, filtro);
-        sql.append(" GROUP BY DATE(e.fecha_inicio), e.cultivo_id, c.nombre ORDER BY DATE(e.fecha_inicio) DESC, c.nombre");
+        sql.append("""
+                 GROUP BY DATE_FORMAT(e.fecha_inicio, '%Y-%m-%d'), e.cultivo_id, c.nombre
+                 ORDER BY DATE_FORMAT(e.fecha_inicio, '%Y-%m-%d') DESC, c.nombre
+                """);
         return jdbcTemplate.queryForList(sql.toString(), params);
     }
 
