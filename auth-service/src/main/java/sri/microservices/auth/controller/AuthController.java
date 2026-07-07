@@ -26,12 +26,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> ingresar(@RequestBody AuthRequest request, HttpSession session) {
-        if (request == null || esBlanco(request.username()) || esBlanco(request.password())) {
+        if (request == null || esBlanco(request.email()) || esBlanco(request.password())) {
             return ResponseEntity.badRequest().body(Map.of("error", "username y password son obligatorios."));
         }
 
         try {
-            var usuario = usuarioService.ejecutar(request.username().trim(), request.password().trim());
+            var usuario = usuarioService.ejecutar(request.email().trim(), request.password().trim());
             session.setAttribute("usuarioLogueado", usuario);
             return ResponseEntity.ok(Map.of("mensaje", "Login correcto.", "usuario", toUsuarioResponse(usuario)));
         } catch (Exception e) {
@@ -42,12 +42,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registrar(@RequestBody AuthRequest request) {
-        if (request == null || esBlanco(request.username()) || esBlanco(request.password())) {
+        if (request == null || esBlanco(request.email()) || esBlanco(request.password())) {
             return ResponseEntity.badRequest().body(Map.of("error", "username y password son obligatorios."));
         }
 
         try {
-            User usuario = usuarioService.registrar(request.username().trim(), request.password().trim());
+            User usuario = usuarioService.registrar(request.email().trim(), request.password().trim());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("mensaje", "Registro exitoso.", "usuario", toUsuarioResponse(usuario)));
         } catch (IllegalArgumentException e) {
