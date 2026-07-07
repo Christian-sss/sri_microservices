@@ -35,7 +35,7 @@ public class EstadoVivoController {
         estado.put("humedad", ultimaLectura != null ? ultimaLectura.humedad() : null);
         estado.put("distancia", ultimaLectura != null ? ultimaLectura.distancia() : null);
         estado.put("lectura_timestamp", mqttSensor.getUltimaLecturaEn());
-        estado.put("alerta", alertaRiegoService.obtenerUltimaAlerta());
+        estado.put("alerta", alertaRiegoService.consumirUltimaAlerta());
         estado.put("timestamp", LocalDateTime.now().toString());
         return estado;
     }

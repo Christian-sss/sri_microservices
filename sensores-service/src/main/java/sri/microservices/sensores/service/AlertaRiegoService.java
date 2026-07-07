@@ -20,8 +20,10 @@ public class AlertaRiegoService {
         );
     }
 
-    public AlertaRiegoResponse obtenerUltimaAlerta() {
-        return ultimaAlerta;
+    public synchronized AlertaRiegoResponse consumirUltimaAlerta() {
+        AlertaRiegoResponse alerta = ultimaAlerta;
+        ultimaAlerta = null;
+        return alerta;
     }
 
     private AlertaRiegoResponse crear(String tipo, String titulo, String mensaje) {
