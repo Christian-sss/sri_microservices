@@ -80,6 +80,11 @@ public class GatewayController {
     private ResponseEntity<byte[]> proxy(HttpServletRequest request, String targetBaseUrl)
             throws IOException, InterruptedException {
         URI targetUri = buildTargetUri(request, targetBaseUrl);
+        System.out.println("Gateway base URL: " + targetBaseUrl);
+        System.out.println("Gateway path recibido: " + request.getRequestURI());
+        System.out.println("Gateway URL destino: " + targetUri);
+
+
         byte[] requestBody = request.getInputStream().readAllBytes();
 
         HttpRequest.Builder outbound = HttpRequest.newBuilder(targetUri)
@@ -90,9 +95,6 @@ public class GatewayController {
         HttpResponse<byte[]> response = httpClient.send(outbound.build(), HttpResponse.BodyHandlers.ofByteArray());
         HttpHeaders headers = copyResponseHeaders(response);
 
-        System.out.println("Gateway base URL: " + targetBaseUrl);
-        System.out.println("Gateway path recibido: " + request.getRequestURI());
-        System.out.println("Gateway URL destino: " + buildTargetUri(request, targetBaseUrl));
 
         return ResponseEntity.status(HttpStatus.valueOf(response.statusCode()))
                 .headers(headers)
