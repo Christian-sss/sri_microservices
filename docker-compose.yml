@@ -1,0 +1,83 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      AUTH_SERVICE_URL: http://auth-service:8081
+      CULTIVOS_SERVICE_URL: http://cultivos-service:8082
+      SENSORES_SERVICE_URL: http://sensores-service:8083
+      RIEGO_SERVICE_URL: http://riego-service:8084
+      REPORTES_SERVICE_URL: http://reportes-service:8085
+      CHAT_SERVICE_URL: http://chat-service:8086
+    depends_on:
+      - auth-service
+      - cultivos-service
+      - sensores-service
+      - riego-service
+      - reportes-service
+      - chat-service
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+  cultivos-service:
+    build: ./cultivos-service
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+  sensores-service:
+    build: ./sensores-service
+    ports:
+      - "8083:8083"
+    environment:
+      PORT: 8083
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MQTT_BROKER: ${MQTT_BROKER:-ssl://d293d13a6a7c49bbbc434365cac41121.s1.eu.hivemq.cloud:8883}
+      MQTT_CLIENT_ID: SriSensoresService
+
+  riego-service:
+    build: ./riego-service
+    ports:
+      - "8084:8084"
+    environment:
+      PORT: 8084
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SENSORES_SERVICE_URL: http://sensores-service:8083
+
+  reportes-service:
+    build: ./reportes-service
+    ports:
+      - "8085:8085"
+    environment:
+      PORT: 8085
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+  chat-service:
+    build: ./chat-service
+    ports:
+      - "8086:8086"
+    environment:
+      PORT: 8086
+      SPRING_AI_OPENAI_BASE_URL: ${SPRING_AI_OPENAI_BASE_URL:-https://models.github.ai/inference}
+      SPRING_AI_OPENAI_API_KEY: ${SPRING_AI_OPENAI_API_KEY}
+      SPRING_AI_OPENAI_CHAT_OPTIONS_MODEL: ${SPRING_AI_OPENAI_CHAT_OPTIONS_MODEL:-openai/gpt-4o-mini}
