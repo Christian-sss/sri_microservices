@@ -31,7 +31,7 @@ public class AuthController {
         }
 
         try {
-            User usuario = usuarioService.ejecutar(request.username().trim(), request.password().trim());
+            var usuario = usuarioService.ejecutar(request.username().trim(), request.password().trim());
             session.setAttribute("usuarioLogueado", usuario);
             return ResponseEntity.ok(Map.of("mensaje", "Login correcto.", "usuario", toUsuarioResponse(usuario)));
         } catch (Exception e) {
