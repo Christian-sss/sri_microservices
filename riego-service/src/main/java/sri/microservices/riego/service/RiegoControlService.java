@@ -96,8 +96,8 @@ public class RiegoControlService {
             }
             configuracion.setCultivoActivo(cultivo);
             configuracionRiegoRepository.saveAndFlush(configuracion);
-            sensoresClient.enviarComando(COMANDO_ON);
             eventoRiegoService.registrarInicio(cultivoId, ModoRiego.MANUAL, lecturaActual);
+            sensoresClient.enviarComando(COMANDO_ON);
             return toResponse(configuracion, "Bomba encendida.");
         }
 

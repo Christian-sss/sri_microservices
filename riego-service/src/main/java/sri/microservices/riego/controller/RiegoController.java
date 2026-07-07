@@ -60,11 +60,16 @@ public class RiegoController {
 
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<Map<String, String>> manejarForbidden(SecurityException exception) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", mensajeError(exception)));
     }
 
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class, NullPointerException.class})
     public ResponseEntity<Map<String, String>> manejarBadRequest(RuntimeException exception) {
-        return ResponseEntity.badRequest().body(Map.of("error", exception.getMessage()));
+        return ResponseEntity.badRequest().body(Map.of("error", mensajeError(exception)));
+    }
+
+    private String mensajeError(Exception exception) {
+        String mensaje = exception.getMessage();
+        return mensaje != null && !mensaje.isBlank() ? mensaje : "Solicitud de riego invalida.";
     }
 }

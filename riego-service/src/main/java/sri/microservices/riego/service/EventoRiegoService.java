@@ -11,6 +11,7 @@ import sri.microservices.riego.repository.CultivoRepository;
 import sri.microservices.riego.repository.EventoRiegoRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class EventoRiegoService {
@@ -24,13 +25,13 @@ public class EventoRiegoService {
     }
 
     @Transactional
-    public void registrarInicio(Integer cultivoId, ModoRiego modoRiego, SensorData lecturaInicial) {
+    public boolean registrarInicio(Integer cultivoId, ModoRiego modoRiego, SensorData lecturaInicial) {
         if (lecturaInicial == null || lecturaInicial.humedad() == null) {
             throw new IllegalArgumentException("No hay una lectura de sensor disponible para iniciar el riego.");
         }
 
         if (eventoRiegoRepository.findFirstByEstadoOrderByFechaInicioDesc(EstadoRiego.EN_PROCESO).isPresent()) {
-            return;
+            return false;
         }
 
         Cultivo cultivo = cultivoRepository.findById(cultivoId)
@@ -42,7 +43,8 @@ public class EventoRiegoService {
         evento.setFechaInicio(LocalDateTime.now());
         evento.setHumedadSueloInicial(lecturaInicial.humedad());
         evento.setEstado(EstadoRiego.EN_PROCESO);
-        eventoRiegoRepository.save(evento);
+        eventoRiegoRepository.saveAndFlush(evento);
+        return true;
     }
 
     @Transactional
@@ -56,5 +58,13 @@ public class EventoRiegoService {
                     evento.setEstado(EstadoRiego.COMPLETADO);
                     eventoRiegoRepository.save(evento);
                 });
+    }
+
+    public Optional<EventoRiego> obtenerRiegoEnProceso() {
+        return eventoRiegoRepository.findFirstByEstadoOrderByFechaInicioDesc(EstadoRiego.EN_PROCESO);
+    }
+
+    public boolean existeRiegoAutomaticoEntre(LocalDateTime inicio, LocalDateTime fin) {
+        return eventoRiegoRepository.existsByModoRiegoAndFechaInicioBetween(ModoRiego.AUTOMATICO, inicio, fin);
     }
 }
