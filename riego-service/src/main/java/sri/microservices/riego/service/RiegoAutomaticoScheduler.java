@@ -43,7 +43,7 @@ public class RiegoAutomaticoScheduler {
         this.eventoRiegoService = eventoRiegoService;
     }
 
-    @Scheduled(cron = "0 * * * * *", zone = "America/Lima")
+    @Scheduled(fixedRate = 1000)
     public void ejecutarRiegoProgramado() {
         try {
             ConfiguracionRiego configuracion = configuracionRiegoRepository.findById(CONFIG_ID).orElse(null);
@@ -58,9 +58,9 @@ public class RiegoAutomaticoScheduler {
                 return;
             }
 
-            LocalDateTime inicioDia = hoy.atStartOfDay();
-            LocalDateTime finDia = hoy.plusDays(1).atStartOfDay();
-            if (eventoRiegoService.existeRiegoAutomaticoEntre(inicioDia, finDia)) {
+            LocalDateTime inicioMinutoProgramado = LocalDateTime.of(hoy, horaProgramada);
+            LocalDateTime finMinutoProgramado = inicioMinutoProgramado.plusMinutes(1);
+            if (eventoRiegoService.existeRiegoAutomaticoEntre(inicioMinutoProgramado, finMinutoProgramado)) {
                 return;
             }
 
@@ -89,7 +89,10 @@ public class RiegoAutomaticoScheduler {
             }
 
             int duracionMinutos = obtenerDuracionMinutos(evento.getCultivo());
-            long minutosTranscurridos = Duration.between(evento.getFechaInicio(), LocalDateTime.now()).toMinutes();
+            long minutosTranscurridos = Duration.between(
+                    evento.getFechaInicio(),
+                    LocalDateTime.now(ZONA_RAILWAY_APP)
+            ).toMinutes();
             if (minutosTranscurridos < duracionMinutos) {
                 return;
             }

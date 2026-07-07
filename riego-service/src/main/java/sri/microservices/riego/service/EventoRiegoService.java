@@ -11,10 +11,13 @@ import sri.microservices.riego.repository.CultivoRepository;
 import sri.microservices.riego.repository.EventoRiegoRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 @Service
 public class EventoRiegoService {
+
+    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final EventoRiegoRepository eventoRiegoRepository;
     private final CultivoRepository cultivoRepository;
@@ -40,7 +43,7 @@ public class EventoRiegoService {
         EventoRiego evento = new EventoRiego();
         evento.setCultivo(cultivo);
         evento.setModoRiego(modoRiego);
-        evento.setFechaInicio(LocalDateTime.now());
+        evento.setFechaInicio(LocalDateTime.now(ZONA_APP));
         evento.setHumedadSueloInicial(lecturaInicial.humedad());
         evento.setEstado(EstadoRiego.EN_PROCESO);
         eventoRiegoRepository.saveAndFlush(evento);
@@ -51,7 +54,7 @@ public class EventoRiegoService {
     public void completarRiego(SensorData lecturaFinal) {
         eventoRiegoRepository.findFirstByEstadoOrderByFechaInicioDesc(EstadoRiego.EN_PROCESO)
                 .ifPresent(evento -> {
-                    evento.setFechaFin(LocalDateTime.now());
+                    evento.setFechaFin(LocalDateTime.now(ZONA_APP));
                     evento.setHumedadSueloFinal(lecturaFinal != null && lecturaFinal.humedad() != null
                             ? lecturaFinal.humedad()
                             : evento.getHumedadSueloInicial());

@@ -12,15 +12,9 @@ public interface EventoRiegoRepository extends JpaRepository<EventoRiego, Long> 
 
     Optional<EventoRiego> findFirstByEstadoOrderByFechaInicioDesc(EstadoRiego estado);
 
-<<<<<<< HEAD
     boolean existsByModoRiegoAndFechaInicioBetween(
             ModoRiego modoRiego,
             LocalDateTime inicio,
             LocalDateTime fin
     );
-=======
-    long countByModoRiegoAndFechaInicioBetween(ModoRiego modoRiego,
-                                               LocalDateTime inicio,
-                                               LocalDateTime fin);
->>>>>>> 16018ee81f76f239fc266973c5a87e9d6d395446
 }

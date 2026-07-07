@@ -9,7 +9,6 @@ import sri.microservices.riego.config.ServiceProperties;
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties(ServiceProperties.class)
-@EnableScheduling
 public class RiegoServiceApplication {
 
     public static void main(String[] args) {
