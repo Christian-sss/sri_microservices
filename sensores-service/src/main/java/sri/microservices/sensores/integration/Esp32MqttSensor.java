@@ -12,9 +12,12 @@ import sri.microservices.sensores.service.AlertaRiegoService;
 import sri.microservices.sensores.service.ProcesarDatosService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Component
 public class Esp32MqttSensor {
+
+    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final Esp32MqttConnectionManager mqtt;
     private final ProcesarDatosService procesarDatosService;
@@ -94,7 +97,7 @@ public class Esp32MqttSensor {
 
             SensorData sensorData = new SensorData(humedad, distancia, bombaActiva);
             ultimoDato = sensorData;
-            ultimaLecturaEn = LocalDateTime.now();
+            ultimaLecturaEn = LocalDateTime.now(ZONA_APP);
             procesarDatosService.procesar(sensorData);
             detectarTanqueVacio(sensorData);
         } catch (Exception e) {

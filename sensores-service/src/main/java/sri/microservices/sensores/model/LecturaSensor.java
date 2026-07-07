@@ -28,6 +28,6 @@ public class LecturaSensor {
     @Column(name = "cultivo_id")
     private Integer cultivoId;
 
-    @Column(name = "fecha_lectura", insertable = false, updatable = false)
+    @Column(name = "fecha_lectura", nullable = false)
     private LocalDateTime fechaLectura;
 }

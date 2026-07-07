@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,7 @@ public class ReporteService {
 
     private static final String CULTIVO_MANTENIMIENTO = "mantenimiento";
     private static final String NOMBRE_MANTENIMIENTO = "Mantenimiento / Sin Cultivo";
+    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -67,7 +69,7 @@ public class ReporteService {
         JasperReport jasperReport = cargarReporteDesdeJrxml("reportes/grafico_modos_riego.jrxml");
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("creadoPor", "Sistema SRI - Administrador");
-        parametros.put("fechaGeneracion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        parametros.put("fechaGeneracion", LocalDateTime.now(ZONA_APP).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         parametros.put("TITULO_FILTRO", obtenerTituloFiltro(filtro));
         parametros.put("sensorDataSource", new JRMapCollectionDataSource(sensorDataList));
         parametros.put("modosDataSource", new JRMapCollectionDataSource(resumenModos));
@@ -97,7 +99,7 @@ public class ReporteService {
         JasperReport jasperReport = cargarReporteDesdeJrxml("reportes/consumo_agua.jrxml");
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("creadoPor", "Sistema SRI - Administrador");
-        parametros.put("fechaGeneracion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        parametros.put("fechaGeneracion", LocalDateTime.now(ZONA_APP).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         parametros.put("TITULO_FILTRO", obtenerTituloFiltro(filtro));
         parametros.put("TOTAL_LITROS", Math.round(totalLitros * 100.0) / 100.0);
         parametros.put("consumoAguaDataSource", new JRMapCollectionDataSource(datosReporte));
