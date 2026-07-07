@@ -93,6 +93,10 @@ public class GatewayController {
         copyRequestHeaders(request, outbound);
 
         HttpResponse<byte[]> response = httpClient.send(outbound.build(), HttpResponse.BodyHandlers.ofByteArray());
+
+        System.out.println("AUTH STATUS: " + response.statusCode());
+        System.out.println("AUTH BODY: " + new String(response.body()));
+
         HttpHeaders headers = copyResponseHeaders(response);
 
 
