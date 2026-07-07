@@ -4,13 +4,10 @@ import org.springframework.stereotype.Service;
 import sri.microservices.sensores.dto.AlertaRiegoResponse;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class AlertaRiegoService {
-
-    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final AtomicLong secuencia = new AtomicLong();
     private volatile AlertaRiegoResponse ultimaAlerta;
@@ -35,7 +32,7 @@ public class AlertaRiegoService {
                 tipo,
                 titulo,
                 mensaje,
-                LocalDateTime.now(ZONA_APP).toString()
+                LocalDateTime.now().toString()
         );
     }
 }

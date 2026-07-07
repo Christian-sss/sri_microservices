@@ -10,15 +10,12 @@ import sri.microservices.sensores.integration.Esp32MqttSensor;
 import sri.microservices.sensores.service.AlertaRiegoService;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class EstadoVivoController {
-
-    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final Esp32MqttConnectionManager mqttConnectionManager;
     private final Esp32MqttControlRiego mqttControlRiego;
@@ -39,7 +36,7 @@ public class EstadoVivoController {
         estado.put("distancia", ultimaLectura != null ? ultimaLectura.distancia() : null);
         estado.put("lectura_timestamp", mqttSensor.getUltimaLecturaEn());
         estado.put("alerta", alertaRiegoService.consumirUltimaAlerta());
-        estado.put("timestamp", LocalDateTime.now(ZONA_APP).toString());
+        estado.put("timestamp", LocalDateTime.now().toString());
         return estado;
     }
 

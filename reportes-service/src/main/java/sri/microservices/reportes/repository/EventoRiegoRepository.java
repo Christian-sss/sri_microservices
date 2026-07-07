@@ -12,10 +12,16 @@ import java.util.List;
 
 public interface EventoRiegoRepository extends JpaRepository<EventoRiego, Long> {
 
+    @Query("SELECT e.modoRiego, COUNT(e) FROM EventoRiego e " +
+            "WHERE FUNCTION('MONTH', e.fechaInicio) = FUNCTION('MONTH', CURRENT_DATE) " +
+            "AND FUNCTION('YEAR', e.fechaInicio) = FUNCTION('YEAR', CURRENT_DATE) " +
+            "GROUP BY e.modoRiego")
+    List<Object[]> contarRiegosPorModoMesActual();
+
     @Query(value = "SELECT DATE(fecha_inicio) as fecha, SUM(TIMESTAMPDIFF(SECOND, fecha_inicio, fecha_fin)) as duracion_segundos " +
-            "FROM eventos_riego WHERE fecha_inicio >= :inicio AND estado = 'COMPLETADO' " +
+            "FROM eventos_riego WHERE fecha_inicio >= NOW() - INTERVAL 7 DAY AND estado = 'COMPLETADO' " +
             "GROUP BY DATE(fecha_inicio) ORDER BY fecha", nativeQuery = true)
-    List<Object[]> obtenerDuracionDiariaUltimos7Dias(@Param("inicio") LocalDateTime inicio);
+    List<Object[]> obtenerDuracionDiariaUltimos7Dias();
 
     @Query(value = "SELECT DATE_FORMAT(e.fecha_inicio, '%Y-%m-%d') AS fecha, " +
             "COALESCE(c.nombre, 'Pruebas / Mantenimiento') AS cultivo, " +

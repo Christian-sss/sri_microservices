@@ -8,7 +8,6 @@ import sri.microservices.sensores.dto.SensorData;
 import sri.microservices.sensores.integration.Esp32MqttSensor;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,8 +15,6 @@ import java.util.Map;
 @RequestMapping("/api/sensor")
 @RequiredArgsConstructor
 public class SensorController {
-
-    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final Esp32MqttSensor mqttSensor;
 
@@ -29,7 +26,7 @@ public class SensorController {
         response.put("distancia", ultimaLectura != null ? ultimaLectura.distancia() : null);
         response.put("bombaActiva", ultimaLectura != null ? ultimaLectura.bombaActiva() : null);
         response.put("lecturaTimestamp", mqttSensor.getUltimaLecturaEn());
-        response.put("timestamp", LocalDateTime.now(ZONA_APP).toString());
+        response.put("timestamp", LocalDateTime.now().toString());
         return response;
     }
 }

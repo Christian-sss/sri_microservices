@@ -19,7 +19,6 @@ import sri.microservices.reportes.repository.LecturaSensorRepository;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,8 +28,6 @@ import java.util.LinkedHashMap;
 
 @Service
 public class EstadisticasService {
-
-    private static final ZoneId ZONA_APP = ZoneId.of("America/Lima");
 
     private final EventoRiegoRepository eventoRiegoRepository;
     private final LecturaSensorRepository lecturaSensorRepository;
@@ -82,7 +79,7 @@ public class EstadisticasService {
     }
 
     public DistribucionModosResponse obtenerDistribucionModosMesActual(Integer cultivoId, boolean soloMantenimiento) {
-        LocalDate hoy = LocalDate.now(ZONA_APP);
+        LocalDate hoy = LocalDate.now();
         LocalDateTime inicioMes = hoy.withDayOfMonth(1).atStartOfDay();
         LocalDateTime finMes = inicioMes.plusMonths(1);
 
@@ -109,13 +106,11 @@ public class EstadisticasService {
         Map<String, Integer> datos = new LinkedHashMap<>();
         datos.put("MANUAL", 0);
         datos.put("AUTOMATICO", 0);
-        LocalDate hoy = LocalDate.now(ZONA_APP);
-        LocalDateTime inicioMes = hoy.withDayOfMonth(1).atStartOfDay();
-        LocalDateTime finMes = inicioMes.plusMonths(1);
-        datos.put("MANUAL", Math.toIntExact(eventoRiegoRepository.countByModoRiegoAndFechaInicioBetween(
-                ModoRiego.MANUAL, inicioMes, finMes)));
-        datos.put("AUTOMATICO", Math.toIntExact(eventoRiegoRepository.countByModoRiegoAndFechaInicioBetween(
-                ModoRiego.AUTOMATICO, inicioMes, finMes)));
+        for (Object[] fila : eventoRiegoRepository.contarRiegosPorModoMesActual()) {
+            ModoRiego modo = (ModoRiego) fila[0];
+            Long cantidad = (Long) fila[1];
+            datos.put(modo.name(), cantidad.intValue());
+        }
         return datos;
     }
 
@@ -162,8 +157,7 @@ public class EstadisticasService {
     private DatosDuracion obtenerDuracionUltimos7Dias() {
         List<String> labels = new ArrayList<>();
         List<Long> valores = new ArrayList<>();
-        LocalDateTime inicio = LocalDate.now(ZONA_APP).minusDays(6).atStartOfDay();
-        for (Object[] fila : eventoRiegoRepository.obtenerDuracionDiariaUltimos7Dias(inicio)) {
+        for (Object[] fila : eventoRiegoRepository.obtenerDuracionDiariaUltimos7Dias()) {
             labels.add(formatearFecha(fila[0]));
             valores.add(fila[1] instanceof Number numero ? numero.longValue() : 0L);
         }
